@@ -1,12 +1,16 @@
 package com.yash.blog.controllers;
 
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yash.blog.confige.AppConstants;
 import com.yash.blog.payloads.ApiResponse;
-import com.yash.blog.payloads.CategoryDto;
+
 import com.yash.blog.payloads.PostDto;
 import com.yash.blog.payloads.PostResponse;
 import com.yash.blog.services.FileService;
 import com.yash.blog.services.PostService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -59,8 +65,7 @@ public class PostController {
 			@RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false)Integer pageSize,
 			@RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false)String sortBy,
 			@RequestParam(value = "sortDir",defaultValue = AppConstants.SORT_DIR,required = false)String sortDir) {
-		PostResponse allPost = this.postService.getPostByCategory(cid,pageNumber,pageSize,sortBy,sortDir
-				);
+		PostResponse allPost = this.postService.getPostByCategory(cid,pageNumber,pageSize,sortBy,sortDir);
 		return new ResponseEntity<>(allPost, HttpStatus.OK);
 	}
 	//get post by user
@@ -103,7 +108,7 @@ public class PostController {
 		List<PostDto> result = this.postService.serachPost(keyword);
 		return new ResponseEntity<>(result,HttpStatus.OK);
 	}
-	//post image uplode
+	//post image uploade
 	@PostMapping("/post/image/upload/{postId}")
 	public ResponseEntity<PostDto> uploadImage(
 			@RequestParam("image") MultipartFile image,
@@ -115,5 +120,15 @@ public class PostController {
 		PostDto updatePost = this.postService.UpdatePost(postDto, postId);
 		return new ResponseEntity<PostDto> (updatePost,HttpStatus.OK);
 		
+	}
+	
+	//methode to serve file
+	
+	@GetMapping(value = "/post/image/{imageName}" , produces = MediaType.IMAGE_JPEG_VALUE)
+	public void downloadImage(@PathVariable("imageName") String iamgeName , HttpServletResponse response) throws IOException
+	{
+		InputStream is = this.fileService.getResource(path, iamgeName);
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		StreamUtils.copy(is, response.getOutputStream() );
 	}
 }

@@ -1,7 +1,11 @@
 package com.yash.blog.payloads;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 
@@ -26,5 +30,6 @@ public class PostDto {
 	private Date adddate;
 	private UserDTO user;
 	private CategoryDto category;
+	private List<CommentDto> comments = new ArrayList<>();
 	
 }

@@ -21,6 +21,7 @@ import com.yash.blog.payloads.PostDto;
 import com.yash.blog.payloads.PostResponse;
 import com.yash.blog.payloads.UserDTO;
 import com.yash.blog.repositories.CategoryRepo;
+import com.yash.blog.repositories.CommentRepo;
 import com.yash.blog.repositories.PostRepo;
 import com.yash.blog.repositories.UserRepo;
 import com.yash.blog.services.PostService;
@@ -37,6 +38,8 @@ public class PostServiceImpl implements PostService {
 	private UserRepo userRepo;
 	@Autowired
 	private CategoryRepo categoryRepo;
+	@Autowired
+	private CommentRepo commentRepo;
 
 	@Override
 	public PostDto creatPost(PostDto dto, Long uid, Long cid) {
